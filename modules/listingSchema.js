@@ -1,20 +1,16 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose');
 
-// Define the schema to match listingsAndReviews sample dataset
-const listingSchema = new Schema({
-  name: String,
-  summary: String,
-  property_type: String,
-  bedrooms: Number,
-  bathrooms: Number,
-  number_of_reviews: Number,
-  address: {
-    country: String,
-    street: String,
-    suburb: String,
-    market: String
-  }
-});
+const listingSchema = new mongoose.Schema({
+    name: String,
+    summary: String,
+    property_type: String,
+    bedrooms: Number,
+    bathrooms: Number,
+    address: {
+        street: String,
+        suburb: String,
+        country: String
+    }
+}, { collection: 'listingsAndReviews' }); // Explicit collection name
 
-module.exports = mongoose.model("Listing", listingSchema);
+module.exports = mongoose.model('Listing', listingSchema);

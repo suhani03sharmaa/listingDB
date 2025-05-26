@@ -1,45 +1,46 @@
-const mongoose = require("mongoose");
-const Listing = require("./listingSchema");
+const mongoose = require('mongoose');
+const Listing = require('./listingSchema');
 
 module.exports = class ListingsDB {
-  constructor() {
-    this.ListingModel = null;
-  }
-
-  async initialize(connectionString) {
+  async initialize(mongoDBConnectionString) {
     try {
-      await mongoose.connect(connectionString);
-      this.ListingModel = Listing;
-    } catch (err) {
-      throw err;
+      await mongoose.connect(mongoDBConnectionString, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+      });
+      console.log("Connected to MongoDB Atlas!");
+    } catch (error) {
+      throw new Error("Error connecting to MongoDB: " + error);
     }
   }
 
-  async addNewListing(data) {
-    const listing = new this.ListingModel(data);
-    return await listing.save();
+  addNewListing(listingData) {
+    const listing = new Listing(listingData);
+    return listing.save();
   }
 
-  async getAllListings(page, perPage, name) {
-    const query = name ? { name: new RegExp(name, "i") } : {};
-    const skipAmount = (page - 1) * perPage;
+  getAllListings(page, perPage, name) {
+    let findBy = {};
+    if (name) {
+      findBy.name = { $regex: name, $options: 'i' };
+    }
 
-    return await this.ListingModel.find(query)
+    return Listing.find(findBy)
       .sort({ number_of_reviews: -1 })
-      .skip(skipAmount)
+      .skip((page - 1) * perPage)
       .limit(perPage)
       .exec();
   }
 
-  async getListingById(id) {
-    return await this.ListingModel.findById(id).exec();
+  getListingById(id) {
+    return Listing.findById(id).exec();
   }
 
-  async updateListingById(data, id) {
-    return await this.ListingModel.updateOne({ _id: id }, { $set: data }).exec();
+  updateListingById(data, id) {
+    return Listing.findByIdAndUpdate(id, data, { new: true }).exec();
   }
 
-  async deleteListingById(id) {
-    return await this.ListingModel.deleteOne({ _id: id }).exec();
+  deleteListingById(id) {
+    return Listing.findByIdAndDelete(id).exec();
   }
 };

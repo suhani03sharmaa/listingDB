@@ -7,7 +7,7 @@
  * https://www.senecapolytechnic.ca/about/policies/academic-integrity-policy.html
  *
  * Name: Suhani Sharma     Student ID: 144675238      Date: 2025-05-24
- * Published URL: https://your-api-name.vercel.app
+ * Published URL: https://listings-api-su123.vercel.app/
  ********************************************************************************/
 
 const express = require("express");
